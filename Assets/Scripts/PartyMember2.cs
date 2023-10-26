@@ -1,15 +1,15 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerController : MonoBehaviour
+public class PartyMember2 : MonoBehaviour
 {
     PlayerActions input;
     NavMeshAgent agent;
 
     [SerializeField] LayerMask clickableLayers;
     [SerializeField] float lookRotationSpeed = 8f;
+    [SerializeField] GameObject player;
     //[SerializeField] float radius = 0.25f;
-    [SerializeField] GameObject obstacle;
 
 
     void Awake()
@@ -17,12 +17,12 @@ public class PlayerController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         input = new PlayerActions();
         AssignInputs();
+        agent.destination = new Vector3(player.transform.position.x+1.5f, player.transform.position.y, player.transform.position.z-1.5f);
     }
 
     void AssignInputs()
     {
         input.Main.Move.performed += ctx => ClickToMove();
-        input.Main.CreateObstacle.performed += ctx => CreateObstacle();
     }
 
     void ClickToMove()
@@ -31,16 +31,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hitLeft;
         if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitLeft, 100, clickableLayers))
         {
-            agent.destination = hitLeft.point;
-        }
-    }
-
-    void CreateObstacle()
-    {
-        RaycastHit hitRight;
-        if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitRight, 100, clickableLayers))
-        {
-            Instantiate(obstacle).transform.position = hitRight.point;
+            agent.destination = new Vector3(hitLeft.point.x+1.5f, hitLeft.point.y, hitLeft.point.z-1.5f);
         }
     }
 
